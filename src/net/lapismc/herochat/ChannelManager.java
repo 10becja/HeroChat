@@ -7,8 +7,7 @@ import org.bukkit.plugin.PluginManager;
 
 import java.util.*;
 
-public class ChannelManager
-        implements MessageFormatSupplier {
+public class ChannelManager implements MessageFormatSupplier {
     private HashMap<String, Channel> channels = new HashMap<>();
     private Channel defaultChannel;
     private HashMap<Chatter.Permission, Permission> wildcardPermissions = new HashMap<>();
@@ -170,12 +169,14 @@ public class ChannelManager
 
     public void loadChannels() {
         for (Channel channel : this.storage.loadChannels()) {
-            addChannel(channel);
+            if (null != channel) {
+                addChannel(channel);
+            }
         }
     }
 
     private void registerChannelPermissions() {
-        for (Chatter.Permission p : modPermissions) {
+        for (Chatter.Permission p : Chatter.Permission.values()) {
             Permission perm = new Permission(p.formWildcard(), PermissionDefault.FALSE);
             Bukkit.getServer().getPluginManager().addPermission(perm);
             this.wildcardPermissions.put(p, perm);

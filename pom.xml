@@ -16,6 +16,14 @@
                     <include>*.yml</include>
                 </includes>
             </resource>
+            <resource>
+                <targetPath>\net\lapismc\herochat\resources</targetPath>
+                <directory>.\src\net\lapismc\herochat\resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>*.properties</include>
+                </includes>
+            </resource>
         </resources>
         <plugins>
             <plugin>
