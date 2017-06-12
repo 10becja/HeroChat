@@ -1,0 +1,22 @@
+name: Herochat
+main: net.lapismc.herochat.Herochat
+version: 5.6.7
+website: http://www.herocraftonline.com
+authors: [DThielke, Sleaker, Kainzo, Dart2112]
+description: Chat channel system
+depend: [Vault]
+commands:
+  herochat:
+    aliases: ['ch', 'leave', 'join', 'ignore', 'msg', 'tell', 'pm', 'w', 'r', 'afk']
+    description: Root Herochat command
+    usage: /<command>
+  me:
+    description: Sends emote messages
+    usage: /<command> <message>
+permissions:
+    herochat.force.join.all:
+        default: false
+    herochat.force.leave.all:
+        default: false
+    herochat.autojoin.all:
+        default: false
