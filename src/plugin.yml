@@ -1,5 +1,5 @@
 name: Herochat
-main: net.lapismc.herochat.Herochat
+main: com.dthielke.herochat.Herochat
 version: 5.6.7
 website: http://www.herocraftonline.com
 authors: [DThielke, Sleaker, Kainzo, Dart2112]
