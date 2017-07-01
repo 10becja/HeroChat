@@ -37,7 +37,7 @@ public class Herochat extends JavaPlugin {
         return channelManager;
     }
 
-    static Chat getChatService() {
+    public static Chat getChatService() {
         return chatService;
     }
 
