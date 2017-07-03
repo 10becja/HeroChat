@@ -75,7 +75,7 @@ public class Herochat extends JavaPlugin {
         log.info("[Herochat] " + message);
     }
 
-    static void logChat(String message) {
+    public static void logChat(String message) {
         chatLog.info(ChatColor.stripColor(message));
     }
 

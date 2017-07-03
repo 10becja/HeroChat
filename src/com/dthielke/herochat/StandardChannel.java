@@ -3,10 +3,12 @@ package com.dthielke.herochat;
 import net.milkbowl.vault.chat.Chat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -185,6 +187,19 @@ public class StandardChannel
     public void setBans(Set<String> bans) {
         this.bans = bans;
         this.storage.flagUpdate(this);
+    }
+
+    public Set<String> getWorlds() {
+        List<World> worlds = Bukkit.getServer().getWorlds();
+        Set<String> worldNames = new HashSet<>();
+        for (World w : worlds) {
+            worldNames.add(w.getName());
+        }
+        return worldNames;
+    }
+
+    public boolean isCrossWorld() {
+        return true;
     }
 
     public ChatColor getColor() {

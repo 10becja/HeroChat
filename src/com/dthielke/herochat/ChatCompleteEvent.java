@@ -10,7 +10,7 @@ public class ChatCompleteEvent
     private final Channel channel;
     private final String msg;
 
-    ChatCompleteEvent(Chatter sender, Channel channel, String msg) {
+    public ChatCompleteEvent(Chatter sender, Channel channel, String msg) {
         this.sender = sender;
         this.channel = channel;
         this.msg = msg;

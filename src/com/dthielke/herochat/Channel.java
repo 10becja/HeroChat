@@ -36,6 +36,10 @@ public interface Channel {
 
     void setFormat(String paramString);
 
+    Set<String> getWorlds();
+
+    boolean isCrossWorld();
+
     Set<Chatter> getMembers();
 
     Set<String> getModerators();
