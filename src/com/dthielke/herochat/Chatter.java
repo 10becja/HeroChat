@@ -1,9 +1,11 @@
 package com.dthielke.herochat;
 
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.Set;
+import java.util.UUID;
 
 public interface Chatter {
     boolean addChannel(Channel paramChannel, boolean paramBoolean1, boolean paramBoolean2);
@@ -56,7 +58,11 @@ public interface Chatter {
 
     String getName();
 
+    UUID getuuid();
+
     Player getPlayer();
+
+    OfflinePlayer getOfflinePlayer();
 
     ChatterStorage getStorage();
 

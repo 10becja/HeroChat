@@ -2,15 +2,17 @@ package com.dthielke.herochat;
 
 import com.dthielke.herochat.util.Messaging;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.UUID;
 
 public class StandardChatter
         implements Chatter {
-    private final Player player;
+    private final OfflinePlayer offlinePlayer;
     private Chatter lastPMSource;
     private Channel activeChannel;
     private Channel lastActiveChannel;
@@ -22,9 +24,9 @@ public class StandardChatter
     private boolean muted = false;
     private boolean afk = false;
 
-    StandardChatter(ChatterStorage storage, Player player) {
+    StandardChatter(ChatterStorage storage, OfflinePlayer offlinePlayer) {
         this.storage = storage;
-        this.player = player;
+        this.offlinePlayer = offlinePlayer;
     }
 
     public boolean addChannel(Channel channel, boolean announce, boolean flagUpdate) {
@@ -46,20 +48,20 @@ public class StandardChatter
     }
 
     public Chatter.Result canBan(Channel channel) {
-        if (Herochat.hasChannelPermission(this.player, channel, Chatter.Permission.BAN)) {
+        if (Herochat.hasChannelPermission(this.offlinePlayer.getPlayer(), channel, Chatter.Permission.BAN)) {
             return Chatter.Result.ALLOWED;
         }
-        if ((channel.isModerator(this.player.getName())) && (Herochat.getChannelManager().checkModPermission(Chatter.Permission.BAN))) {
+        if ((channel.isModerator(this.offlinePlayer.getName())) && (Herochat.getChannelManager().checkModPermission(Chatter.Permission.BAN))) {
             return Chatter.Result.ALLOWED;
         }
         return Chatter.Result.NO_PERMISSION;
     }
 
     public Chatter.Result canColorMessages(Channel channel, ChatColor color) {
-        if (Herochat.hasChannelPermission(this.player, channel, Chatter.Permission.COLOR)) {
+        if (Herochat.hasChannelPermission(this.offlinePlayer.getPlayer(), channel, Chatter.Permission.COLOR)) {
             return Chatter.Result.ALLOWED;
         }
-        if (!Herochat.hasChannelPermission(this.player, channel, Chatter.Permission.valueOf(color.name()))) {
+        if (!Herochat.hasChannelPermission(this.offlinePlayer.getPlayer(), channel, Chatter.Permission.valueOf(color.name()))) {
             return Chatter.Result.NO_PERMISSION;
         }
         return Chatter.Result.ALLOWED;
@@ -72,17 +74,17 @@ public class StandardChatter
         if (!channel.isMember(this)) {
             return Chatter.Result.INVALID;
         }
-        if ((channel.isTransient()) || (!Herochat.hasChannelPermission(this.player, channel, Chatter.Permission.EMOTE))) {
+        if ((channel.isTransient()) || (!Herochat.hasChannelPermission(this.offlinePlayer.getPlayer(), channel, Chatter.Permission.EMOTE))) {
             return Chatter.Result.NO_PERMISSION;
         }
-        if ((this.muted) || (channel.isMuted(this.player.getName()))) {
+        if ((this.muted) || (channel.isMuted(this.offlinePlayer.getName()))) {
             return Chatter.Result.MUTED;
         }
         return Chatter.Result.ALLOWED;
     }
 
     public Chatter.Result canFocus(Channel channel) {
-        if (!Herochat.hasChannelPermission(this.player, channel, Chatter.Permission.FOCUS)) {
+        if (!Herochat.hasChannelPermission(this.offlinePlayer.getPlayer(), channel, Chatter.Permission.FOCUS)) {
             return Chatter.Result.NO_PERMISSION;
         }
         Chatter.Result speak = canSpeak(channel);
@@ -96,10 +98,10 @@ public class StandardChatter
         if (channel.isMember(this)) {
             return Chatter.Result.INVALID;
         }
-        if (!Herochat.hasChannelPermission(this.player, channel, Chatter.Permission.JOIN)) {
+        if (!Herochat.hasChannelPermission(this.offlinePlayer.getPlayer(), channel, Chatter.Permission.JOIN)) {
             return Chatter.Result.NO_PERMISSION;
         }
-        if (channel.isBanned(this.player.getName())) {
+        if (channel.isBanned(this.offlinePlayer.getName())) {
             return Chatter.Result.BANNED;
         }
         if (!password.equals(channel.getPassword())) {
@@ -109,10 +111,10 @@ public class StandardChatter
     }
 
     public Chatter.Result canKick(Channel channel) {
-        if (Herochat.hasChannelPermission(this.player, channel, Chatter.Permission.KICK)) {
+        if (Herochat.hasChannelPermission(this.offlinePlayer.getPlayer(), channel, Chatter.Permission.KICK)) {
             return Chatter.Result.ALLOWED;
         }
-        if ((channel.isModerator(this.player.getName())) && (Herochat.getChannelManager().checkModPermission(Chatter.Permission.KICK))) {
+        if ((channel.isModerator(this.offlinePlayer.getName())) && (Herochat.getChannelManager().checkModPermission(Chatter.Permission.KICK))) {
             return Chatter.Result.ALLOWED;
         }
         return Chatter.Result.NO_PERMISSION;
@@ -122,7 +124,7 @@ public class StandardChatter
         if (!channel.isMember(this)) {
             return Chatter.Result.INVALID;
         }
-        if (!Herochat.hasChannelPermission(this.player, channel, Chatter.Permission.LEAVE)) {
+        if (!Herochat.hasChannelPermission(this.offlinePlayer.getPlayer(), channel, Chatter.Permission.LEAVE)) {
             return Chatter.Result.NO_PERMISSION;
         }
         return Chatter.Result.ALLOWED;
@@ -172,30 +174,30 @@ public class StandardChatter
                 }
             }
         }
-        if (Herochat.hasChannelPermission(this.player, channel, permission)) {
+        if (Herochat.hasChannelPermission(this.offlinePlayer.getPlayer(), channel, permission)) {
             return Chatter.Result.ALLOWED;
         }
-        if ((channel.isModerator(this.player.getName())) && (Herochat.getChannelManager().checkModPermission(permission))) {
+        if ((channel.isModerator(this.offlinePlayer.getName())) && (Herochat.getChannelManager().checkModPermission(permission))) {
             return Chatter.Result.ALLOWED;
         }
         return Chatter.Result.NO_PERMISSION;
     }
 
     public Chatter.Result canMute(Channel channel) {
-        if (Herochat.hasChannelPermission(this.player, channel, Chatter.Permission.MUTE)) {
+        if (Herochat.hasChannelPermission(this.offlinePlayer.getPlayer(), channel, Chatter.Permission.MUTE)) {
             return Chatter.Result.ALLOWED;
         }
-        if ((channel.isModerator(this.player.getName())) && (Herochat.getChannelManager().checkModPermission(Chatter.Permission.BAN))) {
+        if ((channel.isModerator(this.offlinePlayer.getName())) && (Herochat.getChannelManager().checkModPermission(Chatter.Permission.BAN))) {
             return Chatter.Result.ALLOWED;
         }
         return Chatter.Result.NO_PERMISSION;
     }
 
     public Chatter.Result canRemove(Channel channel) {
-        if (Herochat.hasChannelPermission(this.player, channel, Chatter.Permission.REMOVE)) {
+        if (Herochat.hasChannelPermission(this.offlinePlayer.getPlayer(), channel, Chatter.Permission.REMOVE)) {
             return Chatter.Result.ALLOWED;
         }
-        if ((channel.isModerator(this.player.getName())) && (Herochat.getChannelManager().checkModPermission(Chatter.Permission.REMOVE))) {
+        if ((channel.isModerator(this.offlinePlayer.getName())) && (Herochat.getChannelManager().checkModPermission(Chatter.Permission.REMOVE))) {
             return Chatter.Result.ALLOWED;
         }
         return Chatter.Result.NO_PERMISSION;
@@ -205,24 +207,24 @@ public class StandardChatter
         if (!channel.isMember(this)) {
             return Chatter.Result.INVALID;
         }
-        if ((!channel.isTransient()) && (!Herochat.hasChannelPermission(this.player, channel, Chatter.Permission.SPEAK))) {
+        if ((!channel.isTransient()) && (!Herochat.hasChannelPermission(this.offlinePlayer.getPlayer(), channel, Chatter.Permission.SPEAK))) {
             return Chatter.Result.NO_PERMISSION;
         }
-        if ((this.muted) || (channel.isMuted(this.player.getName()))) {
+        if ((this.muted) || (channel.isMuted(this.offlinePlayer.getName()))) {
             return Chatter.Result.MUTED;
         }
         return Chatter.Result.ALLOWED;
     }
 
     public Chatter.Result canViewInfo(Channel channel) {
-        if (!Herochat.hasChannelPermission(this.player, channel, Chatter.Permission.INFO)) {
+        if (!Herochat.hasChannelPermission(this.offlinePlayer.getPlayer(), channel, Chatter.Permission.INFO)) {
             return Chatter.Result.NO_PERMISSION;
         }
         return Chatter.Result.ALLOWED;
     }
 
     public boolean equals(Object other) {
-        return other == this || other != null && other instanceof Chatter && this.player.equals(((Chatter) other).getPlayer());
+        return other == this || other != null && other instanceof Chatter && this.offlinePlayer.equals(((Chatter) other).getPlayer());
     }
 
     public Channel getActiveChannel() {
@@ -262,11 +264,19 @@ public class StandardChatter
     }
 
     public String getName() {
-        return this.player.getName();
+        return this.offlinePlayer.getName();
+    }
+
+    public UUID getuuid() {
+        return this.offlinePlayer.getUniqueId();
     }
 
     public Player getPlayer() {
-        return this.player;
+        return this.offlinePlayer.getPlayer();
+    }
+
+    public OfflinePlayer getOfflinePlayer() {
+        return this.offlinePlayer;
     }
 
     public ChatterStorage getStorage() {
@@ -278,7 +288,7 @@ public class StandardChatter
     }
 
     public int hashCode() {
-        return this.player.hashCode();
+        return this.offlinePlayer.hashCode();
     }
 
     public boolean isAFK() {
@@ -299,7 +309,7 @@ public class StandardChatter
 
     public boolean isInRange(Chatter other, int distance) {
         Player otherPlayer = other.getPlayer();
-        return this.player.getWorld().equals(otherPlayer.getWorld()) && this.player.getLocation().distanceSquared(otherPlayer.getLocation()) <= distance * distance;
+        return this.offlinePlayer.getPlayer().getWorld().equals(otherPlayer.getWorld()) && this.offlinePlayer.getPlayer().getLocation().distanceSquared(otherPlayer.getLocation()) <= distance * distance;
     }
 
     public boolean isMuted() {
@@ -337,7 +347,7 @@ public class StandardChatter
             this.activeChannel.onFocusGain(this);
             if (announce) {
                 try {
-                    Messaging.send(this.player, Herochat.getMessage("chatter_focus"), channel.getColor() + channel.getName());
+                    Messaging.send(this.offlinePlayer.getPlayer(), Herochat.getMessage("chatter_focus"), channel.getColor() + channel.getName());
                 } catch (MessageNotFoundException e) {
                     Herochat.severe("Messages.properties is missing: chatter_focus");
                 }
@@ -367,15 +377,15 @@ public class StandardChatter
     }
 
     public boolean shouldAutoJoin(Channel channel) {
-        return Herochat.hasChannelPermission(this.player, channel, Chatter.Permission.AUTOJOIN);
+        return Herochat.hasChannelPermission(this.offlinePlayer.getPlayer(), channel, Chatter.Permission.AUTOJOIN);
     }
 
     public boolean shouldForceJoin(Channel channel) {
-        return Herochat.hasChannelPermission(this.player, channel, Chatter.Permission.FORCE_JOIN);
+        return Herochat.hasChannelPermission(this.offlinePlayer.getPlayer(), channel, Chatter.Permission.FORCE_JOIN);
     }
 
     public boolean shouldForceLeave(Channel channel) {
-        return Herochat.hasChannelPermission(this.player, channel, Chatter.Permission.FORCE_LEAVE);
+        return Herochat.hasChannelPermission(this.offlinePlayer.getPlayer(), channel, Chatter.Permission.FORCE_LEAVE);
     }
 
     public void refocus() {
@@ -392,7 +402,7 @@ public class StandardChatter
                 this.activeChannel = channel;
                 this.activeChannel.onFocusGain(this);
                 try {
-                    Messaging.send(this.player, Herochat.getMessage("chatter_focus"), channel.getColor() + channel.getName());
+                    Messaging.send(this.offlinePlayer.getPlayer(), Herochat.getMessage("chatter_focus"), channel.getColor() + channel.getName());
                 } catch (MessageNotFoundException e) {
                     Herochat.severe("Messages.properties is missing: chatter_focus");
                 }

@@ -1,11 +1,11 @@
 package com.dthielke.herochat;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,20 +25,23 @@ public class YMLChatterStorage
     }
 
     public Chatter load(String name) {
-        File folder = new File(this.chatterFolder, name.substring(0, 1).toLowerCase());
-        File file = new File(folder, name + ".yml");
+        OfflinePlayer player = Bukkit.getServer().getOfflinePlayer(name);
+        if (player == null) {
+            return null;
+        }
+        UUID uuid = player.getUniqueId();
+        File file = new File(this.chatterFolder, uuid.toString() + ".yml");
+        File old = new File(this.chatterFolder, name.substring(0, 1).toLowerCase() + File.separator + name + ".yml");
+        if (old.exists()) {
+            old.renameTo(file);
+        }
         FileConfiguration config = new YamlConfiguration();
         try {
-            folder.mkdirs();
             if (file.exists()) {
                 config.load(file);
             }
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
-        }
-        Player player = Bukkit.getServer().getPlayerExact(name);
-        if (player == null) {
-            return null;
         }
         Chatter chatter = new StandardChatter(this, player);
         loadChannels(chatter, config);
@@ -69,6 +72,7 @@ public class YMLChatterStorage
     public void update(Chatter chatter) {
         FileConfiguration config = new YamlConfiguration();
         String name = chatter.getName();
+        String uuid = chatter.getuuid().toString();
         config.set("name", name);
         if (chatter.getActiveChannel() != null) {
             if (chatter.getActiveChannel().isTransient()) {
@@ -87,8 +91,7 @@ public class YMLChatterStorage
         config.set("ignores", new ArrayList<>(chatter.getIgnores()));
         config.set("muted", chatter.isMuted());
         config.set("autojoin", false);
-        File folder = new File(this.chatterFolder, name.substring(0, 1).toLowerCase());
-        File file = new File(folder, name + ".yml");
+        File file = new File(this.chatterFolder, uuid + ".yml");
         try {
             config.save(file);
         } catch (IOException e) {
@@ -133,7 +136,9 @@ public class YMLChatterStorage
             channels.add(channelManager.getDefaultChannel());
         }
         for (Channel channel : channels) {
-            channel.addMember(chatter, false, false);
+            if (channel != null) {
+                channel.addMember(chatter, false, false);
+            }
         }
     }
 

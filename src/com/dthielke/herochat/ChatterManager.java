@@ -1,5 +1,6 @@
 package com.dthielke.herochat;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -10,7 +11,7 @@ public class ChatterManager {
     private Map<String, Chatter> chatters = new HashMap<>();
     private ChatterStorage storage;
 
-    public void addChatter(Player player) {
+    public void addChatter(OfflinePlayer player) {
         String name = player.getName().toLowerCase();
         Chatter chatter = this.chatters.get(name);
         if (chatter != null) {
