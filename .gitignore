@@ -1,3 +1,7 @@
 /.idea
 /target
 HeroChat.iml
+/bin/
+
+*.classpath
+.project
